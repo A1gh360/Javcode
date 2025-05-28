@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 تعلم Java باحتراف</title>
+
+    <!-- تحميل مكتبة Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
+
+    <style>
+        /* تحسين الخلفية */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: gold;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease;
+        }
+
+        /* تحسين عرض البطاقة */
+        .lesson-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lesson-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0px 6px 20px rgba(255, 165, 0, 0.7);
+        }
+
+        .lesson-card .category {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #ff7f50;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .lesson-card pre {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .lesson-card .explanation {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            border-right: 4px solid #ff7f50;
+        }
+
+        /* إضافة التنسيق لتحسين تصميم الفلاتر */
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-container select,
+        .filter-container input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            outline: none;
+            flex-grow: 1;
+            min-width: 200px;
+        }
+
+        /* الوضع الليلي */
+        .dark-mode {
+            background-color: #121212;
+            color: #f8f9fa;
+        }
+
+        .dark-mode .lesson-card {
+            background-color: #1e1e1e;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            color: #f8f9fa;
+        }
+
+        .dark-mode .lesson-card h4 {
+            color: #ff7f50;
+        }
+
+        .dark-mode .lesson-card p,
+        .dark-mode .lesson-card .category {
+            color: #f8f9fa;
+        }
+
+        .dark-mode .lesson-card pre {
+            background-color: #2d2d2d;
+            color: #f8f9fa;
+        }
+
+        .dark-mode .lesson-card .explanation {
+            background-color: #2a3a4a;
+            color: #f8f9fa;
+        }
+
+        .dark-mode .filter-container select,
+        .dark-mode .filter-container input {
+            background-color: #2d2d2d;
+            color: #f8f9fa;
+            border-color: #444;
+        }
+
+        /* تحسين النصوص داخل الأكواد */
+        pre code {
+            color: inherit;
+        }
+
+        /* أزرار النسخ */
+        .copy-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .copy-btn:hover {
+            background-color: #45a049;
+        }
+
+        .toggle-btn {
+            background-color: #ff7f50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background-color: #e67347;
+        }
+
+        /* شريط التمرير */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .dark-mode ::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+
+        .dark-mode ::-webkit-scrollbar-thumb {
+            background: #666;
+        }
+
+        .dark-mode ::-webkit-scrollbar-thumb:hover {
+            background: #888;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="text-center py-6 bg-gradient-to-r from-orange-500 to-yellow-500">
+        <h1 class="text-4xl font-bold text-white">📚 تعلم Java باحتراف</h1>
+        <p class="text-lg mt-2 text-white">كل ما تحتاجه لإتقان Java بسهولة واحترافية</p>
+    </header>
+
+    <!-- مربع البحث والفلاتر -->
+    <div class="container mx-auto px-4 mt-6">
+        <div class="filter-container">
+            <input type="text" id="searchInput" placeholder="🔎 ابحث عن درس..."
+                class="p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 text-black shadow-md">
+
+            <select id="filterCategory" class="p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                <option value="">جميع التصنيفات</option>
+                <option value="مبتدئ">مبتدئ</option>
+                <option value="متوسط">متوسط</option>
+                <option value="متقدم">متقدم</option>
+                <option value="ملفات">تعامل مع الملفات</option>
+                <option value="مصفوفات">المصفوفات</option>
+                <option value="نصوص">معالجة النصوص</option>
+            </select>
+
+            <button id="darkModeToggle" class="p-3 rounded-md bg-gray-800 text-white hover:bg-gray-700 transition-colors">
+                🌙 وضع الليل
+            </button>
+        </div>
+    </div>
+
+    <!-- عرض قائمة الدروس -->
+    <div id="lessonsList" class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 mb-12"></div>
+
+    <script>
+        // مصفوفة تحتوي على الدروس
+        const lessons = [
+            {
+                title: '🔹 لكشف مكان أي كلمة في النص',
+                description: 'استخراج جزء من النص باستخدام charAt',
+                category: 'نصوص',
+                code: `public class Main {
+    public static void main(String[] args) {
+        String []g={"Ali  iiqiwua"};
+        String s=g[0];
+        for(int i=16;i<s.length();i++){
+            System.out.print(s.charAt(i));
+        }
+    }
+}`,
+                explanation: 'هذا الكود يستخرج جزء من النص بدءاً من الفهرس 16 حتى نهاية النص.\n\n- يستخدم charAt(i) للحصول على الحرف في الموضع i\n- الحلقة تبدأ من الفهرس 16 وتطبع كل حرف حتى نهاية السلسلة'
+            },
+            {
+                title: '🔹 قراءة محتوى الملفات',
+                description: 'كود لقراءة محتوى ملف نصي سطراً سطراً',
+                category: 'ملفات',
+                code: `import java.io.*;
+public class Main {
+    public static void main(String[] args) {
+        String g="/storage/emulated/0/تجربة/tt.txt";
+        System.out.print(g.hashCode());
+        try(BufferedReader br = new BufferedReader(new FileReader(g))){
+            
+            String line;
+            while((line=br.readLine())!=null){
+                System.out.print("\\n"+line);
+            }
+        }
+        catch(IOException e){
+            System.out.print("خطا في القراءة");
+        }
+    }
+}`,
+                explanation: 'هذا الكود يقرأ محتوى ملف نصي ويطبعه سطراً سطراً.\n\n- يستخدم BufferedReader لقراءة الملف بكفاءة\n- FileReader لفتح الملف\n- try-with-resources يضمن إغلاق الملف تلقائياً\n- hashCode() يعرض رمز تجزئة مسار الملف'
+            },
+            {
+                title: '🔹 تعلم الثوابت في الجافا',
+                description: 'استخدام المتغيرات الثابتة (static)',
+                category: 'مبتدئ',
+                code: `import java.util.*;
+public class Main {
+    static int a=8;
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        System.out.println("اكتب اي رقم");
+        int r=s.nextInt();
+        System.out.println("النتيجة"+ff(r));
+    }
+    private static int ff(int o){
+        return o+a;
+    }
+}`,
+                explanation: 'يوضح هذا الكود استخدام المتغيرات الثابتة (static) والدوال الثابتة.\n\n- المتغير a ثابت ويتم مشاركته بين جميع نسخ الكلاس\n- الدالة ff ثابتة ويمكن استدعاؤها دون إنشاء كائن\n- Scanner يستخدم لقراءة المدخلات من المستخدم'
+            },
+            {
+                title: '🔹 مصفوفة ثنائية البعد مع for-each',
+                description: 'طريقة عرض مصفوفة ثنائية باستخدام for-each',
+                category: 'مصفوفات',
+                code: `public class Main {
+    public static void main(String[] args) {
+        int[][] h = new int[3][3];
+        h[0][0] = 1;
+        h[0][1] = 2;
+        h[0][2] = 3;
+        h[1][0] = 4;
+        h[1][1] = 5;
+        h[1][2] = 6;
+        h[2][0] = 7;
+        h[2][1] = 8;
+        h[2][2] = 9;
+        
+        j(h); // استدعاء الدالة بمصفوفة واحدة
+    }
+
+    private static void j(int[][] matrix) {
+        for (int[] row : matrix) {
+            for (int value : row) {
+                System.out.print(value + "\\t");
+            }
+            System.out.println();
+        }
+    }
+}`,
+                explanation: 'يوضح هذا الكود كيفية استخدام حلقة for-each مع المصفوفات ثنائية البعد.\n\n- for-each أسهل للقراءة عند التكرار على جميع عناصر المصفوفة\n- لا تحتاج إلى متغير عداد أو شرط توقف\n- الطباعة تتم باستخدام \\t لإضافة تبويب بين الأرقام'
+            },
+            {
+                title: '🔹 قاعدة بيانات بسيطة باستخدام ArrayList',
+                description: 'تخزين وعرض البيانات باستخدام ArrayList',
+                category: 'متوسط',
+                code: `import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList<String> userData = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+        while(true){
+            System.out.println("أدخل المعلومات (اكتب 'تم' لإنهاء الإدخال):");
+            String input = scanner.nextLine();
+            if (input.equals("عرض")) {
+                break;
+            }
+            userData.add(input);
+        }
+        System.out.println("المعلومات التي أدخلتها:");
+        System.out.println(userData);
+        scanner.close();
+    }
+}`,
+                explanation: 'هذا الكود ينشئ قاعدة بيانات بسيطة باستخدام ArrayList.\n\nمميزات الكود:\n1. يستقبل مدخلات من المستخدم حتى يكتب "عرض"\n2. يخزن المدخلات في ArrayList\n3. يعرض جميع البيانات المدخلة عند الإنتهاء\n4. يستخدم Scanner لقراءة المدخلات\n5. يجب إغلاق Scanner بعد الإنتهاء منه'
+            },
+            {
+                title: '🔹 عد حروف العلة في النص',
+                description: 'حساب عدد حروف العلة في سلسلة نصية',
+                category: 'نصوص',
+                code: `public class Main {
+    public static void main(String[] args) {
+        String s = "ali Eelmenet ultra";
+        int l = tt(s); 
+        System.out.println("  "+l);
+    }
+
+    private static int tt(String g) {
+        int co = 0;
+        g = g.toLowerCase();
+        for(int i = 0; i < g.length(); i++) {
+            char c = g.charAt(i); 
+            if(c == 'a' || c == 'e' || 
+               c == 'i' || c == 'o' || 
+               c == 'u') {
+                co++;
+            }
+        }
+        return co;
+    }
+}`,
+                explanation: 'هذا الكود يحسب عدد حروف العلة في النص.\n\n- يحول النص إلى أحرف صغيرة لتسهيل المقارنة\n- يتفحص كل حرف في النص باستخدام charAt()\n- يزيد العداد عندما يجد حرف علة\n- حروف العلة هي: a, e, i, o, u\n- الدالة tt تقوم بالحساب وتعيد النتيجة'
+            },
+            {
+                title: '🔹 تعلم العامل الشرطي (Ternary Operator)',
+                description: 'استخدام العامل الشرطي في جافا',
+                category: 'مبتدئ',
+                code: `public class Main {
+    public static void main(String[] args) {
+        int i =5;
+        System.out.println(i==1? true:false);
+    }
+}`,
+                explanation: 'يوضح هذا الكود استخدام العامل الشرطي (Ternary Operator).\n\nالصيغة: (condition) ? value_if_true : value_if_false\n\nفي هذا المثال:\n- إذا كانت i تساوي 1 يطبع true\n- وإلا يطبع false\n\nهذا العامل مختصر لكتابة if-else في حالات بسيطة'
+            },
+            {
+                title: '🔹 جمع صفوف وأعمدة مصفوفة ثنائية',
+                description: 'حساب مجموع كل صف وكل عمود في مصفوفة',
+                category: 'مصفوفات',
+                code: `public class Prog2apr29b {
+    public static void main(String[] args) {
+        int [][] x2 = {{1,2,3},{4,5,6},{7,8,9}};
+        printMatrix(x2);
+        hr();
+        
+        // sum each row
+        for(int row=0;row<x2.length;row++){
+            int rowTotal= 0;
+            for(int col=0;col<x2[row].length;col++){
+                rowTotal = rowTotal + x2[row][col];
+            }
+            System.out.println("Sum of row" + row + " is " + rowTotal);
+        }
+        hr();
+        
+        // sum each row (using for each)
+        int i=0;
+        for(int[] row:x2){
+            int rowTotal=0;
+            for(int cell:row){
+                rowTotal+= cell;
+            }
+            System.out.println("Sum of row" + i + " is " + rowTotal);
+            i++;
+        }
+        hr();
+
+        // sum each column
+        for(int col=0;col<x2.length;col++){
+            int colTotal=0;
+            for(int row=0;row<x2[col].length;row++){
+                colTotal += x2[row][col];
+            }
+            System.out.println("Sum of col" + col + " is " + colTotal);
+        }
+    }
+    
+    private static void printMatrix(int [][] ar2D){
+        for(int i= 0;i<ar2D.length;i++){
+            for(int j=0;j<ar2D[i].length;j++){
+                System.out.print(ar2D[i][j] + "\\t");
+            }
+            System.out.println("");
+        }
+    }
+    
+    private static void hr(){
+        System.out.println("----------------------");
+    }
+}`,
+                explanation: 'هذا الكود يحسب مجموع كل صف وكل عمود في مصفوفة ثنائية.\n\nطريقتان لحساب مجموع الصفوف:\n1. باستخدام for تقليدي مع عدادات\n2. باستخدام for-each\n\nويستخدم for تقليدي لحساب مجموع الأعمدة\n\nالدوال المساعدة:\n- printMatrix() لعرض المصفوفة\n- hr() لرسم خط فاصل بين النتائج'
+            },
+            {
+                title: '🔹 حساب المضروب (Factorial)',
+                description: 'حساب مضروب عدد باستخدام الدوال العودية',
+                category: 'متقدم',
+                code: `import java.util.*;
+public class Main {
+    public static void main(String[] args) {
+        Scanner s =new Scanner(System.in);
+        double y=s.nextDouble();
+        double a = fac(y);
+        System.out.println("الناتج"+a);
+    }
+    private static double fac(double h){
+        if(h==1||h==0){
+            return 1;
+        }else{
+            return h* fac(h-1);
+        }
+    }
+}`,
+                explanation: 'هذا الكود يحسب مضروب عدد باستخدام الدوال العودية (Recursion).\n\nخصائص الكود:\n- يستقبل عدد من المستخدم\n- يحسب المضروب باستدعاء ذاتي للدالة\n- حالة التوقف: عندما يصبح العدد 1 أو 0\n- المضروب هو حاصل ضرب العدد بجميع الأعداد الأصغر منه حتى 1\nمثال: !5 = 5×4×3×2×1 = 120'
+            },
+            {
+                title: '🔹 البحث عن موضع كلمة في النص',
+                description: 'استخدام indexOf للعثور على موضع حرف أو كلمة',
+                category: 'نصوص',
+                code: `public class Main {
+    public static void main(String[] args) {
+        String h="ali d";
+        int h6= h.indexOf("d");
+        System.out.println(h6);
+    }
+}`,
+                explanation: 'يوضح هذا الكود كيفية استخدام indexOf للبحث عن موضع حرف في النص.\n\n- indexOf() ترجع موضع أول ظهور للحرف أو السلسلة\n- إذا لم تجد الحرف ترجع -1\n- في هذا المثال تطبع 4 لأن حرف d في الموضع الرابع\n- المواضع تبدأ من الصفر'
+            },
+            {
+                title: '🔹 عد تكرارات كلمة في جملة',
+                description: 'حساب عدد مرات ظهور كلمة في نص',
+                category: 'نصوص',
+                code: `import java.util.*;
+public class Main {
+    public static void main(String[] args) {
+        String text = "ali ahmed ali ali ali ali";
+        Scanner s = new Scanner(System.in);
+        String g = s.next();
+        System.out.println(countAli(text,g));
+    }
+
+    private static int countAli(String text2,String h) {
+        return text2.split(h, -1).length - 1;
+    }
+}`,
+                explanation: 'هذا الكود يحسب عدد مرات ظهور كلمة في جملة.\n\nطريقة العمل:\n1. يقسم النص إلى أجزاء باستخدام الكلمة المطلوبة كفاصل\n2. عدد الأجزاء الناتجة ناقص 1 يعطي عدد التكرارات\n3. split() تأخذ نمط التقسيم كمعامل أول\n4. -1 كمعامل ثاني يضمن عدم حذف الأجزاء الفارغة'
+            },
+            {
+                title: '🔹 دوال الرياضيات في الجافا',
+                description: 'استخدام Math.max و Math.abs و Math.pow',
+                category: 'مبتدئ',
+                code: `import java.util.*;
+public class Main {
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        System.out.println("ادخل العدد الاول");
+        double o = s.nextDouble();
+        System.out.println("ادخل العدد الثاني");
+        double g = s.nextDouble();
+        System.out.println(k(o,g));
+        System.out.println(o(o,g));
+        System.out.println(u(o,g));
+        s.close();
+    }
+    private static double k(double y,double x){
+        return Math.pow(y,x);
+    }
+    private static double o(double y,double x){
+        return Math.abs(y-x);
+    }
+    private static double u(double y,double x){
+        return Math.max(y,x);
+    }
+}`,
+                explanation: 'يوضح هذا الكود استخدام بعض دوال الرياضيات في الجافا:\n\n1. Math.pow(x, y) - لحساب x أس y\n2. Math.abs(x) - لحساب القيمة المطلقة\n3. Math.max(x, y) - لإيجاد العدد الأكبر\n\nيستقبل الكود عددين من المستخدم ويطبق هذه الدوال عليهما'
+            }
+        ];
+
+        let darkMode = false;
+
+        // تحميل الدروس
+        function loadLessons(filteredLessons = lessons) {
+            const container = document.getElementById('lessonsList');
+            container.innerHTML = '';
+
+            if (filteredLessons.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-10 text-xl text-gray-600">لا توجد دروس متطابقة مع بحثك</div>';
+                return;
+            }
+
+            filteredLessons.forEach(lesson => {
+                const card = document.createElement('div');
+                card.classList.add('lesson-card', 'hover:shadow-lg');
+                card.innerHTML = `
+                    <div class="category">${lesson.category}</div>
+                    <h4 class="text-xl font-semibold mb-3" style="color: #ff7f50;">${lesson.title}</h4>
+                    <p class="text-gray-600 dark:text-gray-300">${lesson.description}</p>
+                    <pre class="mt-4 mb-4"><code>${lesson.code}</code></pre>
+                    <div class="flex gap-2">
+                        <button class="copy-btn" data-clipboard-text="${lesson.code.replace(/"/g, '&quot;')}">
+                            📃 نسخ الكود
+                        </button>
+                        <button class="toggle-btn" onclick="toggleExplanation(this)">
+                            📖 عرض الشرح
+                        </button>
+                    </div>
+                    <div class="explanation text-gray-700 dark:text-gray-300">
+                        ${lesson.explanation ? lesson.explanation.replace(/\n/g, '<br>') : 'لا يوجد شرح متاح لهذا الكود.'}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // تفعيل وظيفة النسخ
+            const clipboard = new ClipboardJS('.copy-btn');
+            clipboard.on('success', function(e) {
+                e.clearSelection();
+                const originalText = e.trigger.textContent;
+                e.trigger.textContent = '✓ تم النسخ!';
+                setTimeout(() => {
+                    e.trigger.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // دالة لتصفية الدروس
+        function filterLessons() {
+            const categoryFilter = document.getElementById('filterCategory').value;
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filteredLessons = lessons.filter(lesson => {
+                const matchesCategory = !categoryFilter || lesson.category === categoryFilter;
+                const matchesSearch = !searchQuery || 
+                    lesson.title.toLowerCase().includes(searchQuery) || 
+                    lesson.description.toLowerCase().includes(searchQuery) ||
+                    (lesson.explanation && lesson.explanation.toLowerCase().includes(searchQuery)) ||
+                    lesson.code.toLowerCase().includes(searchQuery);
+                
+                return matchesCategory && matchesSearch;
+            });
+            
+            loadLessons(filteredLessons);
+        }
+
+        // دالة لتبديل إظهار الشرح
+        window.toggleExplanation = function(button) {
+            const card = button.closest('.lesson-card');
+            const explanation = card.querySelector('.explanation');
+            const isHidden = explanation.style.display === 'none';
+            
+            explanation.style.display = isHidden ? 'block' : 'none';
+            button.textContent = isHidden ? '📖 إخفاء الشرح' : '📖 عرض الشرح';
+        };
+
+        // أحداث DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            // تحميل الدروس عند أول تحميل للصفحة
+            loadLessons();
+
+            // أحداث الفلاتر والبحث
+            document.getElementById('filterCategory').addEventListener('change', filterLessons);
+            document.getElementById('searchInput').addEventListener('input', filterLessons);
+
+            // حدث الوضع الداكن
+            document.getElementById('darkModeToggle').addEventListener('click', function() {
+                darkMode = !darkMode;
+                document.body.classList.toggle('dark-mode', darkMode);
+                this.textContent = darkMode ? '☀️ وضع النهار' : '🌙 وضع الليل';
+            });
+        });
+    </script>
+</body>
+</html>�لصفحة
+        loadLessons();
+    </script>
+
+</body>
+
+</html>n.category}</div>
+                    <h4 class="text-xl font-semibold mb-3" style="color: #ff7f50;">${lesson.title}</h4>
+                    <p class="text-gray-600 dark:text-gray-300">${lesson.description}</p>
+                    <pre class="mt-4 mb-4"><code>${lesson.code}</code></pre>
+                    <div class="flex gap-2">
+                        <button class="copy-btn" data-clipboard-text="${lesson.code.replace(/"/g, '&quot;')}">
+                            📃 نسخ الكود
+                        </button>
+                        <button class="toggle-btn" onclick="toggleExplanation(this)">
+                            📖 عرض الشرح
+                        </button>
+                    </div>
+                    <div class="explanation text-gray-700 dark:text-gray-300">
+                        ${lesson.explanation ? lesson.explanation.replace(/\n/g, '<br>') : 'لا يوجد شرح متاح لهذا الكود.'}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // تفعيل وظيفة النسخ
+            const clipboard = new ClipboardJS('.copy-btn');
+            clipboard.on('success', function(e) {
+                e.clearSelection();
+                const originalText = e.trigger.textContent;
+                e.trigger.textContent = '✓ تم النسخ!';
+                setTimeout(() => {
+                    e.trigger.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // دالة لتصفية الدروس حسب الفئة
+        document.getElementById('filterCategory').addEventListener('change', function() {
+            filterLessons();
+        });
+
+        // دالة لتصفية الدروس حسب النص المكتوب في مربع البحث
+        document.getElementById('searchInput').addEventListener('input', function() {
+            filterLessons();
+        });
+
+        // دالة لتصفية الدروس
+        function filterLessons() {
+            const categoryFilter = document.getElementById('filterCategory').value;
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filteredLessons = lessons.filter(lesson => {
+                const matchesCategory = !categoryFilter || lesson.category === categoryFilter;
+                const matchesSearch = !searchQuery || 
+                    lesson.title.toLowerCase().includes(searchQuery) || 
+                    lesson.description.toLowerCase().includes(searchQuery) ||
+                    (lesson.explanation && lesson.explanation.toLowerCase().includes(searchQuery)) ||
+                    lesson.code.toLowerCase().includes(searchQuery);
+                
+                return matchesCategory && matchesSearch;
+            });
+            
+            loadLessons(filteredLessons);
+        }
+
+        // دالة لتبديل الوضع الداكن
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode', darkMode);
+            this.textContent = darkMode ? '☀️ وضع النهار' : '🌙 وضع الليل';
+        });
+
+        // دالة لتبديل إظهار الشرح
+        window.toggleExplanation = function(button) {
+            const card = button.closest('.lesson-card');
+            const explanation = card.querySelector('.explanation');
+            const isHidden = explanation.style.display === 'none';
+            
+            explanation.style.display = isHidden ? 'block' : 'none';
+            button.textContent = isHidden ? '📖 إخفاء الشرح' : '📖 عرض الشرح';
+        };
+
+        // تحميل الدروس عند أول تحميل للصفحة
+        loadLessons();
+    </script>
+
+</body>
+
+</html>odeToggle').addEventListener('click', function() {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode', darkMode);
+            this.textContent = darkMode ? '☀️ وضع النهار' : '🌙 وضع الليل';
+        });
+
+        // دالة لتبديل إظهار الشرح
+        window.toggleExplanation = function(button) {
+            const card = button.closest('.lesson-card');
+            const explanation = card.querySelector('.explanation');
+            const isHidden = explanation.style.display === 'none';
+            
+            explanation.style.display = isHidden ? 'block' : 'none';
+            button.textContent = isHidden ? '📖 إخفاء الشرح' : '📖 عرض الشرح';
+        };
+
+        // تحميل الدروس عند أول تحميل للصفحة
+        loadLessons();
+    </script>
+
+</body>
+
+</html>ssons();
+    </script>
+
+</body>
+
+</html>
